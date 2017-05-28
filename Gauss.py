@@ -90,6 +90,8 @@ def revisar(matriz):
     return True
 
 def gaussJordan(matriz):
+    if matrizNula(matriz):
+        return matriz
     while not revisar(matriz):
         """
         El siguiente while sirve para poner un 1 en la fila 0 columna 0
@@ -153,6 +155,14 @@ def gaussJordan(matriz):
                 matriz = multiplicarPorConstante(matriz, cont, constante)
                 matriz = validarUnosArriba([cont, unoAnterior], matriz)
             cont+=1
-    print(matriz)
+    return matriz
 
-gaussJordan([[1, -1, -1, -2], [0, 1, 0, 1], [2, -3, 5, 1]])
+def matrizNula(matriz):
+    matriz0 = True
+    for fila in matriz:
+        for columna in fila:
+            if columna != 0:
+                matriz0 = False
+    return matriz0
+
+#print(gaussJordan([[1, -1, -1, -2], [0, 1, 0, 1], [2, -3, 5, 1]]))

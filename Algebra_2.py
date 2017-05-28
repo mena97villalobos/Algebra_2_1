@@ -8,6 +8,7 @@
 
 import numpy as np
 from fractions import Fraction
+from Gauss import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_TareaAlgebra(object):
@@ -762,12 +763,12 @@ class Ui_TareaAlgebra(object):
     def retranslateUi(self, TareaAlgebra):
         _translate = QtCore.QCoreApplication.translate
         TareaAlgebra.setWindowTitle(_translate("TareaAlgebra", "MainWindow"))
-        self.FilasGroupBox.setTitle(_translate("TareaAlgebra", "Variables"))
+        self.FilasGroupBox.setTitle(_translate("TareaAlgebra", "Ecuaciones"))
         self.filas2.setText(_translate("TareaAlgebra", "2"))
         self.filas3.setText(_translate("TareaAlgebra", "3"))
         self.filas4.setText(_translate("TareaAlgebra", "4"))
         self.filas5.setText(_translate("TareaAlgebra", "5"))
-        self.ColumnasGroupBox.setTitle(_translate("TareaAlgebra", "Ecuaciones"))
+        self.ColumnasGroupBox.setTitle(_translate("TareaAlgebra", "Variables"))
         self.col2.setText(_translate("TareaAlgebra", "2"))
         self.col3.setText(_translate("TareaAlgebra", "3"))
         self.col4.setText(_translate("TareaAlgebra", "4"))
@@ -868,58 +869,9 @@ class Ui_TareaAlgebra(object):
         if not self.generarMatrizReal():
             self.ErrorMessage.setText("Error")
         else:
-            self.ErrorMessage.setText(" ")
-            det = self.getMatrixDeternminant(self.matrizReal)
-            if(det == 0):
-                self.labelSolUnic.setText("El Sistema tiene solución única")
-            else:
-                self.labelSolUnic.setText("El Sistema infinitas soluciones")
-
-    def transposeMatrix(self, m):
-        t = []
-        for r in range(len(m)):
-            tRow = []
-            for c in range(len(m[r])):
-                if c == r:
-                    tRow.append(m[r][c])
-                else:
-                    tRow.append(m[c][r])
-            t.append(tRow)
-        return t
-
-    def getMatrixMinor(self, m, i, j):
-        return [row[:j] + row[j + 1:] for row in (m[:i] + m[i + 1:])]
-
-    def getMatrixDeternminant(self, m):
-        # base case for 2x2 matrix
-        if len(m) == 2:
-            return m[0][0] * m[1][1] - m[0][1] * m[1][0]
-        determinant = 0
-        for c in range(len(m)):
-            determinant += ((-1) ** c) * m[0][c] * self.getMatrixDeternminant(self.getMatrixMinor(m, 0, c))
-        return determinant
-
-    def getMatrixInverse(self, m):
-        determinant = self.getMatrixDeternminant(m)
-        # special case for 2x2 matrix:
-        if len(m) == 2:
-            return [[m[1][1] / determinant, -1 * m[0][1] / determinant],
-                    [-1 * m[1][0] / determinant, m[0][0] / determinant]]
-
-        # find matrix of cofactors
-        cofactors = []
-        for r in range(len(m)):
-            cofactorRow = []
-            for c in range(len(m)):
-                minor = self.getMatrixMinor(m, r, c)
-                cofactorRow.append(((-1) ** (r + c)) * self.getMatrixDeternminant(minor))
-            cofactors.append(cofactorRow)
-        cofactors = self.transposeMatrix(cofactors)
-        for r in range(len(cofactors)):
-            for c in range(len(cofactors)):
-                cofactors[r][c] = cofactors[r][c] / determinant
-        return cofactors
-
+            print(self.matrizReal)
+            self.matrizReal = gaussJordan(self.matrizReal)
+            print(self.matrizReal)
 
     def resetMatriz(self, bool):
         for fila in self.matrizEnInterfaz:

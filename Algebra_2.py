@@ -8,6 +8,7 @@
 
 import numpy as np
 from fractions import Fraction
+from sympy import *
 from Gauss import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -15,6 +16,14 @@ class Ui_TareaAlgebra(object):
     matrizEnInterfaz = []
     matrizActiva = []
     matrizReal = []
+    matrizSYMPY = []
+    base1 = []
+    base2 = []
+    base3 = []
+    base4 = []
+    base5 = []
+    bases = []
+
     filas = 5
     columnas = 5
 
@@ -758,6 +767,12 @@ class Ui_TareaAlgebra(object):
         self.sResutadosButt.setEnabled(False)
         self.retranslateUi(TareaAlgebra)
         QtCore.QMetaObject.connectSlotsByName(TareaAlgebra)
+        self.base1 = [self.sol11, self.sol21, self.sol31, self.sol41, self.sol51]
+        self.base2 = [self.sol12, self.sol22, self.sol32, self.sol42, self.sol52]
+        self.base3 = [self.sol13, self.sol23, self.sol33, self.sol43, self.sol53]
+        self.base4 = [self.sol14, self.sol24, self.sol34, self.sol44, self.sol54]
+        self.base5 = [self.sol15, self.sol25, self.sol35, self.sol45, self.sol55]
+        self.bases = [self.base1, self.base2, self.base3, self.base4, self.base5]
         self.home()
 
     def retranslateUi(self, TareaAlgebra):
@@ -869,9 +884,16 @@ class Ui_TareaAlgebra(object):
         if not self.generarMatrizReal():
             self.ErrorMessage.setText("Error")
         else:
-            print(self.matrizReal)
-            self.matrizReal = gaussJordan(self.matrizReal)
-            print(self.matrizReal)
+            bases = self.matrizSYMPY.nullspace()
+            numeroBase = 0
+            for base in bases:
+                cont = 0
+                for num in base:
+                    self.bases[numeroBase][cont].setText(str(num))
+                    cont+=1
+                numeroBase += 1
+            self.labelSolUnic.setText("La dimensión de la solución es "+str(numeroBase))
+            #self.matrizReal = gaussJordan(self.matrizReal)
 
     def resetMatriz(self, bool):
         for fila in self.matrizEnInterfaz:
@@ -940,8 +962,8 @@ class Ui_TareaAlgebra(object):
         for i in self.matrizReal:
             if (len(i) == 0):
                 self.matrizReal.remove(i)
-        else:
-            return True
+        self.matrizSYMPY = Matrix(self.matrizReal)
+        return True
 
 
 if __name__ == "__main__":
